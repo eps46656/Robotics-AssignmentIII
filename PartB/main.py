@@ -92,7 +92,7 @@ def DrawLine(img, center, phase, color):
         if 0 <= p[0] and p[0] < W and 0 <= p[1] and p[1] < H:
             k.append(p)
 
-    cv.line(img, k[0], k[1], color, 3)
+    cv.line(img, k[0], k[1], color, 1)
 
 def main():
     img_path = sys.argv[1]
