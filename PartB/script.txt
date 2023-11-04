@@ -1,0 +1,9 @@
+
+python main.py <img_path>
+
+example:
+
+python PartB/main.py PartB/images/er7-1.jpg
+python PartB/main.py PartB/images/er7-2.jpg
+python PartB/main.py PartB/images/er7-3.jpg
+python PartB/main.py PartB/images/er7-4.jpg

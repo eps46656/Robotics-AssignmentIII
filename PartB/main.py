@@ -72,9 +72,9 @@ def FindCL(points):
 
     return center, phi
 
-def DrawLine(img, center, phase, color):
-    c = math.cos(phase)
-    s = math.sin(phase)
+def DrawLine(img, center, phi, color):
+    c = math.cos(phi)
+    s = math.sin(phi)
 
     H, W, C = img.shape
 
@@ -117,9 +117,11 @@ def main():
     for obj_i in range(1, num_of_objs+1):
         obj_points = np.stack(np.where(m == obj_i), axis=-1)
 
-        center, phase = FindCL(obj_points)
+        center, phi = FindCL(obj_points)
 
-        DrawLine(img, center, phase, colors[obj_i])
+        print(f"obj {obj_i}: center = {center} phi = {phi}")
+
+        DrawLine(img, center, phi, colors[obj_i])
 
     cv.imshow("obj_img", cv.cvtColor(img, cv.COLOR_BGR2RGB))
     cv.waitKey(0)
