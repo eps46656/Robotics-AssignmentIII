@@ -94,9 +94,13 @@ def DrawLine(img, center, phi, color):
 
     cv.line(img, k[0], k[1], color, 1)
 
+def DrawCircle(img, center, radius, color):
+    cv.circle(img, (int(center[1]), int(center[0])), radius, color, -1)
+
 def main():
-    img_path = sys.argv[1]
-    img = cv.cvtColor(cv.imread(img_path), cv.COLOR_BGR2RGB)
+    input_path = sys.argv[1]
+    output_path = sys.argv[2]
+    img = cv.cvtColor(cv.imread(input_path), cv.COLOR_BGR2RGB)
 
     H, W, C = img.shape
 
@@ -122,8 +126,10 @@ def main():
         print(f"obj {obj_i}: center = {center} phi = {phi}")
 
         DrawLine(img, center, phi, colors[obj_i])
+        DrawCircle(img, center, 3, colors[obj_i])
 
     cv.imshow("obj_img", cv.cvtColor(img, cv.COLOR_BGR2RGB))
+    cv.imwrite(output_path, cv.cvtColor(img, cv.COLOR_BGR2RGB))
     cv.waitKey(0)
     cv.destroyAllWindows()
 
