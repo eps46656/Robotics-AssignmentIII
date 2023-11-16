@@ -2,11 +2,11 @@
 import cv2 as cv
 import numpy as np
 import os
-import random
+import glob
 
 DIR = os.path.dirname(__file__).replace("\\", "/")
 
-def CameraClib(imgs):
+def CameraCalib(imgs):
     pattern_h = 8
     pattern_w = 6
 
@@ -33,43 +33,51 @@ def CameraClib(imgs):
 
         imgpoints.append(corners)
 
-        # uimg = cv.UMat(img)
-        # cv.drawChessboardCorners(uimg, [pattern_h, pattern_w], corners, True)
-        # cv.imshow("uimg", uimg)
-        # cv.waitKey(45)
-
-    # cv.destroyAllWindows()
-
     ret, camera_mat, camera_distort, rvecs, tvecs = cv.calibrateCamera(
         objpoints, imgpoints, gray.shape[::-1], None, None)
 
     return camera_mat, camera_distort
 
+def UndistortImages(imgs, camera_mat, camera_distort):
+    undistorted_imgs = list()
+
+    for img in imgs:
+        h, w = img.shape[:2]
+
+        new_camera_mat, roi = cv.getOptimalNewCameraMatrix(
+            camera_mat, camera_distort, (w, h), 1, (w, h))
+
+        undistorted_img = cv.undistort(
+            img, camera_mat, camera_distort, None, new_camera_mat)
+
+        x, y, w, h = roi
+
+        undistorted_img = undistorted_img[y:y+h, x:x+w]
+        undistorted_imgs.append(undistorted_img)
+
+    return undistorted_imgs
+
 def main():
-    imgs = list()
+    path = f"{DIR}/frames/frame-*.png"
+    path2 = f"{DIR}/frames_extra/frame-*.png"
 
-    # for i in range()
+    filenames = glob.glob(path)
 
-    num_of_frames = 1211
+    imgs = [cv.imread(filename) for filename in filenames]
 
-    frame_idxes = sorted(random.choices(range(num_of_frames), k=64))
+    camera_mat, camera_distort = CameraCalib(imgs)
 
-    print(f"frame_idxes = {frame_idxes}")
-
-    for frame_i in frame_idxes:
-        img = cv.imread(f"{DIR}/vedio_frames/frame-{frame_i}.png")
-
-        imgs.append(img)
-
-    camera_mat, camera_distort = CameraClib(imgs)
-
-    print("camera_mat = ")
-    print(camera_mat)
-    print("camera_distort = ")
-    print(camera_distort)
+    print(f"camera_mat =\n{camera_mat}")
+    print(f"camera_distort =\n{camera_distort}")
 
     np.save(f"{DIR}/camera_params.npy", {"camera_mat": camera_mat,
                                          "camera_distort": camera_distort})
+
+    undistorted_imgs = UndistortImages(imgs, camera_mat, camera_distort)
+
+    for filename, undistorted_img in zip(filenames, undistorted_imgs):
+        filename = f"{DIR}/frames_undistorted/{os.path.basename(filename)}"
+        cv.imwrite(filename, undistorted_img)
 
 if __name__ == "__main__":
     main()
