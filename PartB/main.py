@@ -100,8 +100,7 @@ def main():
 
     H, W, C = img.shape
 
-    colors =[[  0,   0,   0],
-             [255,   0,   0],
+    colors =[[255,   0,   0],
              [  0, 255,   0],
              [  0,   0, 255],
              [255, 255,   0],
@@ -122,6 +121,9 @@ def main():
         print(f"obj {obj_i}: center = {center} phi = {phi}")
 
         DrawLine(img, center, phi, colors[obj_i])
+        cv.circle(img,
+                  (int(round(center[1])), int(round(center[0]))),
+                   3, [0, 0, 0], -1)
 
     cv.imshow("obj_img", cv.cvtColor(img, cv.COLOR_BGR2RGB))
     cv.waitKey(0)

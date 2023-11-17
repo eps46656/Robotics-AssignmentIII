@@ -58,8 +58,11 @@ def UndistortImages(imgs, camera_mat, camera_distort):
     return undistorted_imgs
 
 def main():
-    path = f"{DIR}/frames/frame-*.png"
-    path2 = f"{DIR}/frames_extra/frame-*.png"
+    dir1 = f"frames"
+    dir2 = f"frames_extra"
+
+    dir = dir1
+    path = f"{DIR}/{dir}/frame-*.png"
 
     filenames = glob.glob(path)
 
@@ -76,7 +79,10 @@ def main():
     undistorted_imgs = UndistortImages(imgs, camera_mat, camera_distort)
 
     for filename, undistorted_img in zip(filenames, undistorted_imgs):
-        filename = f"{DIR}/frames_undistorted/{os.path.basename(filename)}"
+        filename = f"{DIR}/undistorted_{dir}/undistorted-{os.path.basename(filename)}"
+
+        print(filename)
+
         cv.imwrite(filename, undistorted_img)
 
 if __name__ == "__main__":
